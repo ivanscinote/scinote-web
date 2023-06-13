@@ -10,7 +10,7 @@ Rails.application.config.content_security_policy do |policy|
   policy.font_src    :self, :https, :data
   policy.img_src     :self, :https, :data, :blob
   policy.object_src  :none
-  policy.script_src  :self, :https, :unsafe_eval
+  policy.script_src  :self, :https, :unsafe_eval, :unsafe_inline
   policy.style_src   :self, :https, :unsafe_inline, :data
   policy.connect_src :self, :data, *Extends::EXTERNAL_SERVICES
 
@@ -19,17 +19,17 @@ Rails.application.config.content_security_policy do |policy|
 end
 
 # https://discuss.rubyonrails.org/t/turbolinks-broken-by-default-with-a-secure-csp/74790
-Rails.application.config.content_security_policy_nonce_generator = ->(request) do
-  # use the same csp nonce for turbolinks requests
-  if request.env['HTTP_TURBOLINKS_REFERRER'].present?
-    request.env['HTTP_X_TURBOLINKS_NONCE']
-  else
-    SecureRandom.base64(16)
-  end
-end
+# Rails.application.config.content_security_policy_nonce_generator = ->(request) do
+#   # use the same csp nonce for turbolinks requests
+#   if request.env['HTTP_TURBOLINKS_REFERRER'].present?
+#     request.env['HTTP_X_TURBOLINKS_NONCE']
+#   else
+#     SecureRandom.base64(16)
+#   end
+# end
 
-# Set the nonce only to specific directives
-Rails.application.config.content_security_policy_nonce_directives = %w(script-src)
+# # Set the nonce only to specific directives
+# Rails.application.config.content_security_policy_nonce_directives = %w(script-src)
 
 # Report CSP violations to a specified URI
 # For further information see the following documentation:
