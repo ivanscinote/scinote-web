@@ -34,6 +34,7 @@
       @delete="deleteModal = true"
       @viewMode="changeViewMode"
       @move="showMoveModal"
+      @menu-visibility-changed="$emit('menu-visibility-changed', $event)"
     ></MenuDropdown>
     <Teleport to="body">
       <deleteAttachmentModal

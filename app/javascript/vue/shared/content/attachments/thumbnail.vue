@@ -1,10 +1,10 @@
 <template>
   <div class="attachment-container asset"
        :data-asset-id="attachment.id"
-       @mouseover="isHovered = true"
-       @mouseleave="isHovered = false"
+       @mouseover="showOptions = true"
+       @mouseleave="handleMouseLeave"
   >
-    <a  :class="{ hidden: isHovered }"
+    <a  :class="{ hidden: showOptions }"
         :href="attachment.attributes.urls.blob"
         class="file-preview-link file-name"
         :id="`modal_link${attachment.id}`"
@@ -27,7 +27,7 @@
         {{ attachment.attributes.file_name }}
       </div>
     </a>
-    <div :class="{ hidden: !isHovered }" class="hovered-thumbnail h-full">
+    <div :class="{ hidden: !showOptions }" class="hovered-thumbnail h-full">
       <a
         :href="attachment.attributes.urls.blob"
         class="file-preview-link file-name"
@@ -44,7 +44,7 @@
       </div>
       <div class="absolute bottom-4 w-[184px] grid grid-cols-[repeat(4,_2.5rem)] justify-between">
         <MenuDropdown
-            v-if="isHovered && openOptions.length > 1"
+            v-if="showOptions && openOptions.length > 1"
             :listItems="openOptions"
             :btnClasses="'btn btn-light icon-btn thumbnail-action-btn'"
             :position="'left'"
@@ -114,12 +114,13 @@
       </div>
     </div>
     <ContextMenu
-      v-if="isHovered"
+      v-show="showOptions"
       :attachment="attachment"
       @attachment:viewMode="updateViewMode"
       @attachment:delete="deleteAttachment"
       @attachment:moved="attachmentMoved"
       @attachment:uploaded="reloadAttachments"
+      @menu-visibility-changed="handleMenuVisibilityChange"
       :withBorder="true"
     />
     <deleteAttachmentModal
@@ -176,7 +177,8 @@ export default {
   },
   data() {
     return {
-      isHovered: false,
+      showOptions: false,
+      isMenuOpen: false,
       deleteModal: false,
       showNoPredefinedAppModal: false
     };
@@ -246,7 +248,16 @@ export default {
   methods: {
     openOVEditor(url) {
       window.showIFrameModal(url);
-    }
+    },
+    handleMouseLeave() {
+      if (!this.isMenuOpen) {
+        this.showOptions = false;
+      }
+    },
+    handleMenuVisibilityChange(newValue) {
+      this.isMenuOpen = newValue;
+      this.showOptions = newValue;
+    },
   }
 };
 </script>
